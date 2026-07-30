@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THAT DAY</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Tło ze zdjęciem -->
+    <div class="photo-container" id="photo-container" style="background-image: url('https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?q=80&w=2940&auto=format&fit=crop');"></div>
+
+    <!-- Główny interfejs -->
+    <main class="ui-layer">
+        
+        <header>
+            <h1 class="logo">THAT DAY</h1>
+            <button class="menu-toggle" id="menu-toggle">Menu</button>
+        </header>
+
+        <nav class="photo-nav">
+            <button class="nav-btn prev" id="prev-btn">←</button>
+            <button class="nav-btn next" id="next-btn">→</button>
+        </nav>
+
+        <footer>
+            <div class="photo-info">
+                <span class="location" id="location-text">Warszawa · Polska</span>
+                <span class="date" id="date-text">30.07.2026</span>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Ukryte menu -->
+    <div class="overlay-menu" id="overlay-menu">
+        <button class="close-menu" id="close-menu">✕</button>
+        <ul class="menu-links">
+            <li><a href="#">Zdjęcia</a></li>
+            <li><a href="#">Kalendarz</a></li>
+            <li><a href="#">O mnie</a></li>
+            <li><a href="#">Instagram</a></li>
+        </ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
