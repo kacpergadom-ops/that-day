@@ -177,10 +177,14 @@ function renderCalendar() {
     let startingDay = firstDay.getDay() - 1;
     if (startingDay === -1) startingDay = 6;
 
+    let cellCount = 0; // Licznik kratek
+
+    // 1. Puste kratki przed rozpoczęciem miesiąca
     for (let i = 0; i < startingDay; i++) {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'calendar-day empty';
         calendarGrid.appendChild(emptyDiv);
+        cellCount++;
     }
 
     const photoMap = {};
@@ -192,6 +196,7 @@ function renderCalendar() {
         }
     });
 
+    // 2. Kratki z dniami miesiąca
     for (let day = 1; day <= daysInMonth; day++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'calendar-day';
@@ -228,6 +233,15 @@ function renderCalendar() {
         }
 
         calendarGrid.appendChild(dayDiv);
+        cellCount++;
+    }
+
+    // 3. Wypełnienie reszty siatki (zawsze 42 kratki = 6 rzędów x 7 dni)
+    const remainingCells = 42 - cellCount;
+    for (let i = 0; i < remainingCells; i++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyDiv);
     }
 }
 
