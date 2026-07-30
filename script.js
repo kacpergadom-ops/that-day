@@ -3,11 +3,17 @@ const API_URL = 'https://that-day-api.kacper-gadom.workers.dev/photos';
 
 let photos = [];
 let currentIndex = 0;
+let calendarCurrentDate = new Date(); // Obiekt do śledzenia widocznego miesiąca w kalendarzu
 
 const LOGO_VARIANTS = [
     'THAT DAY', 'that day', 'That Day', 'thatday', 
     'THATDAY', 'TH47 D4Y', 'th47 d4y', '7h47d4y', 
     '7HA7D4Y', 'Th4t D4y', 'THAT dAy'
+];
+
+const MONTH_NAMES = [
+    'STYCZEŃ', 'LUTY', 'MARZEC', 'KWIECIEŃ', 'MAJ', 'CZERWIEC',
+    'LIPIEC', 'SIERPIEŃ', 'WRZESIEŃ', 'PAŹDZIERNIK', 'LISTOPAD', 'GRUDZIEŃ'
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,6 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const linkCalendar = document.getElementById('link-calendar');
     const linkPhotos = document.getElementById('link-photos');
     const backToMenu = document.getElementById('back-to-menu');
+
+    const calPrevBtn = document.getElementById('cal-prev-month');
+    const calNextBtn = document.getElementById('cal-next-month');
 
     if (menuToggle && overlayMenu) {
         menuToggle.addEventListener('click', () => {
@@ -49,6 +58,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (backToMenu) {
         backToMenu.addEventListener('click', () => showMenuMain());
+    }
+
+    if (calPrevBtn) {
+        calPrevBtn.addEventListener('click', () => {
+            calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+
+    if (calNextBtn) {
+        calNextBtn.addEventListener('click', () => {
+            calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
+            renderCalendar();
+        });
     }
 
     function showMenuMain() {
@@ -81,10 +104,9 @@ async function fetchPhotos() {
         photos = await response.json();
 
         if (photos && photos.length > 0) {
+            // Losowy start
             currentIndex = Math.floor(Math.random() * photos.length);
             renderPhoto(currentIndex);
-        } else {
-            console.log('Brak zdjęć w bazie.');
         }
     } catch (error) {
         console.error('Błąd pobierania zdjęć:', error);
@@ -112,11 +134,9 @@ function renderPhoto(index) {
 
     randomizeLogo();
 
-    // Płynne ukrycie przed podmianą źródła
     if (photoMain) photoMain.classList.remove('loaded');
     if (photoBlurBg) photoBlurBg.classList.remove('loaded');
 
-    // Preload obrazka w pamięci
     const imgLoader = new Image();
     imgLoader.src = photoUrl;
     imgLoader.onload = () => {
@@ -131,7 +151,6 @@ function renderPhoto(index) {
         if (locationText) locationText.textContent = photo.location || 'Brak lokalizacji';
         if (dateText) dateText.textContent = formattedDate;
 
-        // Pokazujemy dopiero gdy obrazek jest w pełni wczytany w tle
         if (photoMain) photoMain.classList.add('loaded');
         if (photoBlurBg) photoBlurBg.classList.add('loaded');
     };
@@ -139,33 +158,82 @@ function renderPhoto(index) {
 
 function renderCalendar() {
     const calendarGrid = document.getElementById('calendar-grid');
+    const monthTitle = document.getElementById('calendar-month-title');
     const overlayMenu = document.getElementById('overlay-menu');
-    if (!calendarGrid) return;
+    if (!calendarGrid || !monthTitle) return;
 
     calendarGrid.innerHTML = '';
 
+    const year = calendarCurrentDate.getFullYear();
+    const month = calendarCurrentDate.getMonth();
+
+    monthTitle.textContent = `${MONTH_NAMES[month]} ${year}`;
+
+    // Pierwszy dzień miesiąca i ilość dni
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+
+    // Dzień tygodnia (0 - Niedziela, zmiana na Polskie 0 - Poniedziałek)
+    let startingDay = firstDay.getDay() - 1;
+    if (startingDay === -1) startingDay = 6;
+
+    // Puste kratki przed 1 dniem miesiąca
+    for (let i = 0; i < startingDay; i++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyDiv);
+    }
+
+    // Mapa zdjęć dla łatwego wyszukiwania po dacie YYYY-MM-DD
+    const photoMap = {};
     photos.forEach((photo, idx) => {
-        const photoUrl = `${R2_PUBLIC_URL}/${photo.filename}`;
-        const formattedDate = photo.photo_date ? photo.photo_date.split(' ')[0].split('-').reverse().join('.') : '';
-
-        const item = document.createElement('div');
-        item.className = 'calendar-item';
-        item.style.backgroundImage = `url('${photoUrl}')`;
-
-        const badge = document.createElement('div');
-        badge.className = 'calendar-date-badge';
-        badge.textContent = formattedDate;
-
-        item.appendChild(badge);
-
-        item.addEventListener('click', () => {
-            currentIndex = idx;
-            renderPhoto(currentIndex);
-            overlayMenu.classList.remove('active');
-        });
-
-        calendarGrid.appendChild(item);
+        if (photo.photo_date) {
+            const dateOnly = photo.photo_date.split(' ')[0]; // Zapewnia format YYYY-MM-DD
+            if (!photoMap[dateOnly]) photoMap[dateOnly] = [];
+            photoMap[dateOnly].push({ photo, idx });
+        }
     });
+
+    // Generowanie kratek dni miesiąca
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+
+        const dayNumSpan = document.createElement('span');
+        dayNumSpan.className = 'calendar-day-num';
+        dayNumSpan.textContent = day;
+        dayDiv.appendChild(dayNumSpan);
+
+        // Formatowanie daty dla tego dnia (np. 2026-07-29)
+        const formattedMonth = String(month + 1).padStart(2, '0');
+        const formattedDay = String(day).padStart(2, '0');
+        const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
+
+        if (photoMap[dateKey] && photoMap[dateKey].length > 0) {
+            const dayPhotos = photoMap[dateKey];
+            const firstPhotoObj = dayPhotos[0];
+            const photoUrl = `${R2_PUBLIC_URL}/${firstPhotoObj.photo.filename}`;
+
+            dayDiv.classList.add('has-photo');
+            dayDiv.style.backgroundImage = `url('${photoUrl}')`;
+
+            if (dayPhotos.length > 1) {
+                const countBadge = document.createElement('span');
+                countBadge.className = 'calendar-photo-count';
+                countBadge.textContent = `+${dayPhotos.length - 1}`;
+                dayDiv.appendChild(countBadge);
+            }
+
+            dayDiv.addEventListener('click', () => {
+                currentIndex = firstPhotoObj.idx;
+                renderPhoto(currentIndex);
+                overlayMenu.classList.remove('active');
+            });
+        }
+
+        calendarGrid.appendChild(dayDiv);
+    }
 }
 
 function showNextPhoto() {
