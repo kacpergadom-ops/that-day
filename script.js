@@ -14,18 +14,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMenu = document.getElementById('close-menu');
     const overlayMenu = document.getElementById('overlay-menu');
 
-    menuToggle.addEventListener('click', () => overlayMenu.classList.add('active'));
-    closeMenu.addEventListener('click', () => overlayMenu.classList.remove('active'));
+    if (menuToggle && overlayMenu) {
+        menuToggle.addEventListener('click', () => overlayMenu.classList.add('active'));
+    }
+    
+    if (closeMenu && overlayMenu) {
+        closeMenu.addEventListener('click', () => overlayMenu.classList.remove('active'));
+    }
 
     // Nawigacja strzałkami na ekranie
-    document.getElementById('prev-btn').addEventListener('click', showPrevPhoto);
-    document.getElementById('next-btn').addEventListener('click', showNextPhoto);
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (prevBtn) prevBtn.addEventListener('click', showPrevPhoto);
+    if (nextBtn) nextBtn.addEventListener('click', showNextPhoto);
 
     // Nawigacja klawiaturą
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') showPrevPhoto();
         if (e.key === 'ArrowRight') showNextPhoto();
-        if (e.key === 'Escape') overlayMenu.classList.remove('active');
+        if (e.key === 'Escape' && overlayMenu) overlayMenu.classList.remove('active');
     });
 });
 
@@ -34,7 +42,7 @@ async function fetchPhotos() {
         const response = await fetch(API_URL);
         photos = await response.json();
 
-        if (photos.length > 0) {
+        if (photos && photos.length > 0) {
             currentIndex = 0; // Zaczynamy od najnowszego zdjęcia
             renderPhoto(currentIndex);
         } else {
@@ -49,24 +57,34 @@ function renderPhoto(index) {
     if (!photos[index]) return;
 
     const photo = photos[index];
-    const photoContainer = document.getElementById('photo-container');
+    const photoMain = document.getElementById('photo-main');
+    const photoBlurBg = document.getElementById('photo-blur-bg');
     const locationText = document.getElementById('location-text');
     const dateText = document.getElementById('date-text');
 
-    // Animacja przejścia (fade)
-    photoContainer.style.opacity = '0.3';
+    const photoUrl = `${R2_PUBLIC_URL}/${photo.filename}`;
+
+    // Efekt przejścia (fade out dla zdjęcia i tła)
+    if (photoMain) photoMain.style.opacity = '0.2';
+    if (photoBlurBg) photoBlurBg.style.opacity = '0.3';
 
     setTimeout(() => {
-        // Podmieniamy zdjęcie na plik z Twojego R2
-        photoContainer.style.backgroundImage = `url('${R2_PUBLIC_URL}/${photo.filename}')`;
+        // Ustawiamy to samo zdjęcie w tle (rozmyte) oraz z przodu (całe)
+        if (photoBlurBg) photoBlurBg.style.backgroundImage = `url('${photoUrl}')`;
+        if (photoMain) photoMain.src = photoUrl;
         
-        // Formatujemy datę (wyciągamy sam dzień, miesiąc i rok bez sekund)
-        const formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
+        // Formatowanie daty (z opcją zapasową w razie braku spacji/myślników)
+        let formattedDate = photo.photo_date;
+        if (photo.photo_date && photo.photo_date.includes('-')) {
+            formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
+        }
         
-        locationText.textContent = photo.location || 'Brak lokalizacji';
-        dateText.textContent = formattedDate;
+        if (locationText) locationText.textContent = photo.location || 'Brak lokalizacji';
+        if (dateText) dateText.textContent = formattedDate;
 
-        photoContainer.style.opacity = '1';
+        // Powrót do pełnej widoczności (fade in)
+        if (photoMain) photoMain.style.opacity = '1';
+        if (photoBlurBg) photoBlurBg.style.opacity = '1';
     }, 200);
 }
 
