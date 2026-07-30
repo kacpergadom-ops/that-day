@@ -8,10 +8,13 @@
 </head>
 <body>
 
-    <!-- Warstwa zdjęcia i rozmytego tła -->
-    <div class="photo-container" id="photo-container"></div>
+    <!-- Tło ze zdjęciem (rozmycie + mały obrazek) -->
+    <div class="photo-wrapper">
+        <div class="photo-blur-bg" id="photo-blur-bg"></div>
+        <img class="photo-main" id="photo-main" src="" alt="That Day Photo">
+    </div>
 
-    <!-- Główny interfejs (nakładka) -->
+    <!-- Interfejs na wierzchu -->
     <main class="ui-layer">
         
         <header>
@@ -26,14 +29,14 @@
 
         <footer>
             <div class="photo-info">
-                <span class="location" id="location-text">Pobieranie...</span>
+                <span class="location" id="location-text">Ładowanie...</span>
                 <span class="date" id="date-text">--.--.----</span>
             </div>
         </footer>
 
     </main>
 
-    <!-- Ukryte menu -->
+    <!-- Menu boczne/ukryte -->
     <div class="overlay-menu" id="overlay-menu">
         <button class="close-menu" id="close-menu">✕</button>
         <ul class="menu-links">
