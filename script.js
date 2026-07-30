@@ -27,15 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Zmienne sekcji
     const calendarContent = document.getElementById('calendar-content');
     const aboutContent = document.getElementById('about-content');
+    const instagramContent = document.getElementById('instagram-content');
     
     // Linki w menu
     const linkPhotos = document.getElementById('link-photos');
     const linkCalendar = document.getElementById('link-calendar');
     const linkAbout = document.getElementById('link-about');
+    const linkInstagram = document.getElementById('link-instagram');
     
     // Przyciski powrotu
     const backToMenuCal = document.getElementById('back-to-menu-cal');
     const backToMenuAbout = document.getElementById('back-to-menu-about');
+    const backToMenuIg = document.getElementById('back-to-menu-ig');
 
     const calPrevBtn = document.getElementById('cal-prev-month');
     const calNextBtn = document.getElementById('cal-next-month');
@@ -72,8 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (linkInstagram) {
+        linkInstagram.addEventListener('click', (e) => {
+            e.preventDefault();
+            showInstagramView();
+        });
+    }
+
     if (backToMenuCal) backToMenuCal.addEventListener('click', () => showMenuMain());
     if (backToMenuAbout) backToMenuAbout.addEventListener('click', () => showMenuMain());
+    if (backToMenuIg) backToMenuIg.addEventListener('click', () => showMenuMain());
 
     if (calPrevBtn) {
         calPrevBtn.addEventListener('click', () => {
@@ -93,11 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (menuContent) menuContent.classList.remove('hidden');
         if (calendarContent) calendarContent.classList.add('hidden');
         if (aboutContent) aboutContent.classList.add('hidden');
+        if (instagramContent) instagramContent.classList.add('hidden');
     }
 
     function showCalendarView() {
         if (menuContent) menuContent.classList.add('hidden');
         if (aboutContent) aboutContent.classList.add('hidden');
+        if (instagramContent) instagramContent.classList.add('hidden');
         if (calendarContent) calendarContent.classList.remove('hidden');
         renderCalendar();
     }
@@ -105,7 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function showAboutView() {
         if (menuContent) menuContent.classList.add('hidden');
         if (calendarContent) calendarContent.classList.add('hidden');
+        if (instagramContent) instagramContent.classList.add('hidden');
         if (aboutContent) aboutContent.classList.remove('hidden');
+    }
+
+    function showInstagramView() {
+        if (menuContent) menuContent.classList.add('hidden');
+        if (calendarContent) calendarContent.classList.add('hidden');
+        if (aboutContent) aboutContent.classList.add('hidden');
+        if (instagramContent) instagramContent.classList.remove('hidden');
     }
 
     const prevBtn = document.getElementById('prev-btn');
@@ -129,8 +150,6 @@ async function fetchPhotos() {
         if (photos && photos.length > 0) {
             currentIndex = Math.floor(Math.random() * photos.length);
             renderPhoto(currentIndex);
-        } else {
-            console.log('No photos in the database.');
         }
     } catch (error) {
         console.error('Error fetching photos:', error);
