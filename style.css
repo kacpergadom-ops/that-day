@@ -13,7 +13,7 @@ html, body {
     overflow: hidden;
 }
 
-/* WARSTWA ZDJĘCIA */
+/* PHOTO LAYER */
 .photo-wrapper {
     position: fixed;
     top: 0;
@@ -60,7 +60,7 @@ html, body {
     opacity: 1;
 }
 
-/* WARSTWA INTERFEJSU */
+/* UI LAYER */
 .ui-layer {
     position: fixed;
     top: 0;
@@ -166,7 +166,7 @@ footer {
     font-weight: 600;
 }
 
-/* NAKŁADKA MENU */
+/* OVERLAY MENU */
 .overlay-menu {
     position: fixed;
     top: 0;
@@ -224,7 +224,7 @@ footer {
     opacity: 0.6;
 }
 
-/* KALENDARZ SIATKOWY (KARTKA Z KALENDARZA) */
+/* CALENDAR GRID */
 .calendar-content {
     width: 100%;
     max-width: 500px;
@@ -297,7 +297,6 @@ footer {
     width: 100%;
 }
 
-/* Dzień w kalendarzu */
 .calendar-day {
     aspect-ratio: 1;
     border-radius: 6px;
@@ -335,13 +334,11 @@ footer {
     z-index: 5;
 }
 
-/* Cień pod numerem dnia dla czytelności na zdjęciu */
 .calendar-day-num {
     position: relative;
     z-index: 2;
 }
 
-/* Wskaźnik wielokrotnych zdjęć z jednego dnia */
 .calendar-photo-count {
     position: absolute;
     bottom: 3px;
