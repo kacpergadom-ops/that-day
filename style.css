@@ -88,8 +88,8 @@ header {
 }
 
 .menu-toggle {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     color: #fff;
     padding: 0.5rem 1rem;
     border-radius: 20px;
@@ -98,6 +98,7 @@ header {
     text-transform: uppercase;
     letter-spacing: 1px;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .photo-nav {
@@ -122,6 +123,7 @@ header {
     font-size: 1.2rem;
     cursor: pointer;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
@@ -132,7 +134,7 @@ footer {
     display: flex;
     justify-content: flex-start;
     z-index: 12;
-    padding-bottom: env(safe-area-inset-bottom, 0px); /* Dobre układy na iPhonie */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .photo-info {
@@ -143,6 +145,7 @@ footer {
     padding: 0.6rem 1rem;
     border-radius: 8px;
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -163,9 +166,9 @@ footer {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.45); /* Półprzezroczyste ciemne tło */
-    backdrop-filter: blur(25px) brightness(0.8); /* Mocny blur zdjęcia z tyłu */
-    -webkit-backdrop-filter: blur(25px) brightness(0.8);
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(30px) brightness(0.7);
+    -webkit-backdrop-filter: blur(30px) brightness(0.7);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -226,7 +229,11 @@ footer {
 }
 
 .calendar-content.hidden {
-    display: none;
+    display: none !important;
+}
+
+.menu-content.hidden {
+    display: none !important;
 }
 
 .back-to-menu {
@@ -248,7 +255,7 @@ footer {
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 12px;
     width: 100%;
 }
