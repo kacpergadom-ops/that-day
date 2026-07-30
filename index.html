@@ -45,15 +45,34 @@
             <ul class="menu-links">
                 <li><a href="#" id="link-photos">Photos</a></li>
                 <li><a href="#" id="link-calendar">Calendar</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Instagram</a></li>
+                <li><a href="#" id="link-about">About</a></li>
             </ul>
+            
+            <!-- Widżet Instagrama z kodem QR -->
+            <div class="ig-widget">
+                <!-- TUTAJ WPISZ SWÓJ NICK W LINKU -->
+                <a href="https://instagram.com/kacpergad" target="_blank" rel="noopener noreferrer" class="ig-card">
+                    <div class="ig-qr-box">
+                        <!-- TUTAJ TEŻ WPISZ SWÓJ NICK W LINKU (za parametrem data=) -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://instagram.com/kacpergad&color=ffffff&bgcolor=00000000&margin=0" alt="Instagram QR" class="ig-qr">
+                    </div>
+                    <div class="ig-info">
+                        <svg class="ig-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        <!-- TUTAJ WPISZ SWÓJ NICK DO WYŚWIETLENIA -->
+                        <span>@kacpergad</span>
+                    </div>
+                </a>
+            </div>
         </div>
 
         <!-- Calendar content -->
         <div class="calendar-content hidden" id="calendar-content">
             <div class="calendar-header">
-                <button class="back-to-menu" id="back-to-menu">← Back</button>
+                <button class="back-to-menu" id="back-to-menu-cal">← Back</button>
                 <div class="calendar-month-nav">
                     <button id="cal-prev-month">‹</button>
                     <h2 class="calendar-title" id="calendar-month-title">JULY 2026</h2>
@@ -68,6 +87,18 @@
 
             <!-- Calendar grid -->
             <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+
+        <!-- About content -->
+        <div class="about-content hidden" id="about-content">
+            <button class="back-to-menu" id="back-to-menu-about">← Back</button>
+            <div class="about-body">
+                <h2 class="about-title">ABOUT ME</h2>
+                <div class="about-text">
+                    <p>Welcome to my visual diary.</p>
+                    <p>Wkleimy tu Twój tekst o Tobie i projekcie w kolejnym kroku.</p>
+                </div>
+            </div>
         </div>
     </div>
 
