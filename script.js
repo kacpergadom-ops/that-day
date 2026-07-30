@@ -81,7 +81,6 @@ async function fetchPhotos() {
         photos = await response.json();
 
         if (photos && photos.length > 0) {
-            // LOSOWE ZDJĘCIE STARTOWE PO OTWARCIU STRONY
             currentIndex = Math.floor(Math.random() * photos.length);
             renderPhoto(currentIndex);
         } else {
@@ -113,13 +112,17 @@ function renderPhoto(index) {
 
     randomizeLogo();
 
-    if (photoMain) photoMain.style.opacity = '0.2';
-    if (photoBlurBg) photoBlurBg.style.opacity = '0.3';
+    // Płynne ukrycie przed podmianą źródła
+    if (photoMain) photoMain.classList.remove('loaded');
+    if (photoBlurBg) photoBlurBg.classList.remove('loaded');
 
-    setTimeout(() => {
+    // Preload obrazka w pamięci
+    const imgLoader = new Image();
+    imgLoader.src = photoUrl;
+    imgLoader.onload = () => {
         if (photoBlurBg) photoBlurBg.style.backgroundImage = `url('${photoUrl}')`;
         if (photoMain) photoMain.src = photoUrl;
-        
+
         let formattedDate = photo.photo_date;
         if (photo.photo_date && photo.photo_date.includes('-')) {
             formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
@@ -128,9 +131,10 @@ function renderPhoto(index) {
         if (locationText) locationText.textContent = photo.location || 'Brak lokalizacji';
         if (dateText) dateText.textContent = formattedDate;
 
-        if (photoMain) photoMain.style.opacity = '1';
-        if (photoBlurBg) photoBlurBg.style.opacity = '1';
-    }, 200);
+        // Pokazujemy dopiero gdy obrazek jest w pełni wczytany w tle
+        if (photoMain) photoMain.classList.add('loaded');
+        if (photoBlurBg) photoBlurBg.classList.add('loaded');
+    };
 }
 
 function renderCalendar() {
