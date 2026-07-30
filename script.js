@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menu-toggle');
     const closeMenu = document.getElementById('close-menu');
     const overlayMenu = document.getElementById('overlay-menu');
-    const menuContent = document.getElementById('menu-content');
     
     // Zmienne sekcji
+    const menuContent = document.getElementById('menu-content');
     const calendarContent = document.getElementById('calendar-content');
     const aboutContent = document.getElementById('about-content');
     const instagramContent = document.getElementById('instagram-content');
@@ -100,32 +100,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showMenuMain() {
-        if (menuContent) menuContent.classList.remove('hidden');
+    function hideAllViews() {
+        if (menuContent) menuContent.classList.add('hidden');
         if (calendarContent) calendarContent.classList.add('hidden');
         if (aboutContent) aboutContent.classList.add('hidden');
         if (instagramContent) instagramContent.classList.add('hidden');
     }
 
+    function showMenuMain() {
+        hideAllViews();
+        if (menuContent) menuContent.classList.remove('hidden');
+    }
+
     function showCalendarView() {
-        if (menuContent) menuContent.classList.add('hidden');
-        if (aboutContent) aboutContent.classList.add('hidden');
-        if (instagramContent) instagramContent.classList.add('hidden');
+        hideAllViews();
         if (calendarContent) calendarContent.classList.remove('hidden');
         renderCalendar();
     }
 
     function showAboutView() {
-        if (menuContent) menuContent.classList.add('hidden');
-        if (calendarContent) calendarContent.classList.add('hidden');
-        if (instagramContent) instagramContent.classList.add('hidden');
+        hideAllViews();
         if (aboutContent) aboutContent.classList.remove('hidden');
     }
 
     function showInstagramView() {
-        if (menuContent) menuContent.classList.add('hidden');
-        if (calendarContent) calendarContent.classList.add('hidden');
-        if (aboutContent) aboutContent.classList.add('hidden');
+        hideAllViews();
         if (instagramContent) instagramContent.classList.remove('hidden');
     }
 
