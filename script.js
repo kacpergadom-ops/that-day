@@ -23,10 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMenu = document.getElementById('close-menu');
     const overlayMenu = document.getElementById('overlay-menu');
     const menuContent = document.getElementById('menu-content');
+    
+    // Zmienne sekcji
     const calendarContent = document.getElementById('calendar-content');
-    const linkCalendar = document.getElementById('link-calendar');
+    const aboutContent = document.getElementById('about-content');
+    
+    // Linki w menu
     const linkPhotos = document.getElementById('link-photos');
-    const backToMenu = document.getElementById('back-to-menu');
+    const linkCalendar = document.getElementById('link-calendar');
+    const linkAbout = document.getElementById('link-about');
+    
+    // Przyciski powrotu
+    const backToMenuCal = document.getElementById('back-to-menu-cal');
+    const backToMenuAbout = document.getElementById('back-to-menu-about');
 
     const calPrevBtn = document.getElementById('cal-prev-month');
     const calNextBtn = document.getElementById('cal-next-month');
@@ -42,13 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         closeMenu.addEventListener('click', () => overlayMenu.classList.remove('active'));
     }
 
-    if (linkCalendar) {
-        linkCalendar.addEventListener('click', (e) => {
-            e.preventDefault();
-            showCalendarView();
-        });
-    }
-
     if (linkPhotos) {
         linkPhotos.addEventListener('click', (e) => {
             e.preventDefault();
@@ -56,9 +58,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (backToMenu) {
-        backToMenu.addEventListener('click', () => showMenuMain());
+    if (linkCalendar) {
+        linkCalendar.addEventListener('click', (e) => {
+            e.preventDefault();
+            showCalendarView();
+        });
     }
+
+    if (linkAbout) {
+        linkAbout.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAboutView();
+        });
+    }
+
+    if (backToMenuCal) backToMenuCal.addEventListener('click', () => showMenuMain());
+    if (backToMenuAbout) backToMenuAbout.addEventListener('click', () => showMenuMain());
 
     if (calPrevBtn) {
         calPrevBtn.addEventListener('click', () => {
@@ -77,12 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function showMenuMain() {
         if (menuContent) menuContent.classList.remove('hidden');
         if (calendarContent) calendarContent.classList.add('hidden');
+        if (aboutContent) aboutContent.classList.add('hidden');
     }
 
     function showCalendarView() {
         if (menuContent) menuContent.classList.add('hidden');
+        if (aboutContent) aboutContent.classList.add('hidden');
         if (calendarContent) calendarContent.classList.remove('hidden');
         renderCalendar();
+    }
+
+    function showAboutView() {
+        if (menuContent) menuContent.classList.add('hidden');
+        if (calendarContent) calendarContent.classList.add('hidden');
+        if (aboutContent) aboutContent.classList.remove('hidden');
     }
 
     const prevBtn = document.getElementById('prev-btn');
@@ -177,9 +200,8 @@ function renderCalendar() {
     let startingDay = firstDay.getDay() - 1;
     if (startingDay === -1) startingDay = 6;
 
-    let cellCount = 0; // Licznik kratek
+    let cellCount = 0;
 
-    // 1. Puste kratki przed rozpoczęciem miesiąca
     for (let i = 0; i < startingDay; i++) {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'calendar-day empty';
@@ -196,7 +218,6 @@ function renderCalendar() {
         }
     });
 
-    // 2. Kratki z dniami miesiąca
     for (let day = 1; day <= daysInMonth; day++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'calendar-day';
@@ -236,7 +257,6 @@ function renderCalendar() {
         cellCount++;
     }
 
-    // 3. Wypełnienie reszty siatki (zawsze 42 kratki = 6 rzędów x 7 dni)
     const remainingCells = 42 - cellCount;
     for (let i = 0; i < remainingCells; i++) {
         const emptyDiv = document.createElement('div');
