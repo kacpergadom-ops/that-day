@@ -13,7 +13,7 @@ html, body {
     overflow: hidden;
 }
 
-/* WARSTWA ZDJĘCIA (Pod spodem) */
+/* WARSTWA ZDJĘCIA */
 .photo-wrapper {
     position: fixed;
     top: 0;
@@ -37,9 +37,11 @@ html, body {
     filter: blur(35px) brightness(0.5);
     transform: scale(1.1);
     z-index: 1;
-    transition: opacity 0.3s ease;
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
 
+/* Ukrywamy domyślnie pusty obrazek (brak ikonki brakującego pliku) */
 .photo-main {
     position: relative;
     z-index: 2;
@@ -50,10 +52,16 @@ html, body {
     object-fit: contain;
     border-radius: 6px;
     box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
-    transition: opacity 0.3s ease;
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
 
-/* WARSTWA INTERFEJSU (Na wierzchu) */
+.photo-main.loaded,
+.photo-blur-bg.loaded {
+    opacity: 1;
+}
+
+/* WARSTWA INTERFEJSU */
 .ui-layer {
     position: fixed;
     top: 0;
@@ -159,7 +167,7 @@ footer {
     font-weight: 600;
 }
 
-/* NAKŁADKA MENU (PRZEZROCZYSTA Z BLUREM) */
+/* NAKŁADKA MENU */
 .overlay-menu {
     position: fixed;
     top: 0;
