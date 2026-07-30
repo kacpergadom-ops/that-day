@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,13 @@
 </head>
 <body>
 
-    <!-- Warstwa zdjęcia i tła -->
+    <!-- Photo and background layer -->
     <div class="photo-wrapper">
         <div class="photo-blur-bg" id="photo-blur-bg"></div>
         <img class="photo-main" id="photo-main" src="" alt="That Day Photo">
     </div>
 
-    <!-- Główny interfejs -->
+    <!-- UI Layer -->
     <main class="ui-layer">
         
         <header>
@@ -29,44 +29,44 @@
 
         <footer>
             <div class="photo-info">
-                <span class="location" id="location-text">Ładowanie...</span>
+                <span class="location" id="location-text">Loading...</span>
                 <span class="date" id="date-text">--.--.----</span>
             </div>
         </footer>
 
     </main>
 
-    <!-- Rozmyte menu nakładkowe -->
+    <!-- Overlay Menu -->
     <div class="overlay-menu" id="overlay-menu">
         <button class="close-menu" id="close-menu">✕</button>
         
-        <!-- Widok główny menu -->
+        <!-- Main menu content -->
         <div class="menu-content" id="menu-content">
             <ul class="menu-links">
-                <li><a href="#" id="link-photos">Zdjęcia</a></li>
-                <li><a href="#" id="link-calendar">Kalendarz</a></li>
-                <li><a href="#">O mnie</a></li>
+                <li><a href="#" id="link-photos">Photos</a></li>
+                <li><a href="#" id="link-calendar">Calendar</a></li>
+                <li><a href="#">About</a></li>
                 <li><a href="#">Instagram</a></li>
             </ul>
         </div>
 
-        <!-- Widok prawdziwego kalendarza -->
+        <!-- Calendar content -->
         <div class="calendar-content hidden" id="calendar-content">
             <div class="calendar-header">
-                <button class="back-to-menu" id="back-to-menu">← Powrót</button>
+                <button class="back-to-menu" id="back-to-menu">← Back</button>
                 <div class="calendar-month-nav">
                     <button id="cal-prev-month">‹</button>
-                    <h2 class="calendar-title" id="calendar-month-title">LIPIEC 2026</h2>
+                    <h2 class="calendar-title" id="calendar-month-title">JULY 2026</h2>
                     <button id="cal-next-month">›</button>
                 </div>
             </div>
 
-            <!-- Dni tygodnia -->
+            <!-- Weekdays -->
             <div class="calendar-weekdays">
-                <span>PN</span><span>WT</span><span>ŚR</span><span>CZ</span><span>PT</span><span>SO</span><span>ND</span>
+                <span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span><span>SU</span>
             </div>
 
-            <!-- Siatka dni -->
+            <!-- Calendar grid -->
             <div class="calendar-grid" id="calendar-grid"></div>
         </div>
     </div>
