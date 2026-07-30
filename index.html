@@ -8,15 +8,12 @@
 </head>
 <body>
 
-    <!-- Photo and background layer -->
     <div class="photo-wrapper">
         <div class="photo-blur-bg" id="photo-blur-bg"></div>
         <img class="photo-main" id="photo-main" src="" alt="That Day Photo">
     </div>
 
-    <!-- UI Layer -->
     <main class="ui-layer">
-        
         <header>
             <h1 class="logo" id="logo">THAT DAY</h1>
             <button class="menu-toggle" id="menu-toggle">Menu</button>
@@ -33,7 +30,6 @@
                 <span class="date" id="date-text">--.--.----</span>
             </div>
         </footer>
-
     </main>
 
     <!-- Overlay Menu -->
@@ -46,27 +42,8 @@
                 <li><a href="#" id="link-photos">Photos</a></li>
                 <li><a href="#" id="link-calendar">Calendar</a></li>
                 <li><a href="#" id="link-about">About</a></li>
+                <li><a href="#" id="link-instagram">Instagram</a></li>
             </ul>
-            
-            <!-- Widżet Instagrama z kodem QR -->
-            <div class="ig-widget">
-                <!-- TUTAJ WPISZ SWÓJ NICK W LINKU -->
-                <a href="https://instagram.com/kacpergad" target="_blank" rel="noopener noreferrer" class="ig-card">
-                    <div class="ig-qr-box">
-                        <!-- TUTAJ TEŻ WPISZ SWÓJ NICK W LINKU (za parametrem data=) -->
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://instagram.com/kacpergad&color=ffffff&bgcolor=00000000&margin=0" alt="Instagram QR" class="ig-qr">
-                    </div>
-                    <div class="ig-info">
-                        <svg class="ig-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
-                        <!-- TUTAJ WPISZ SWÓJ NICK DO WYŚWIETLENIA -->
-                        <span>@kacpergad</span>
-                    </div>
-                </a>
-            </div>
         </div>
 
         <!-- Calendar content -->
@@ -79,13 +56,9 @@
                     <button id="cal-next-month">›</button>
                 </div>
             </div>
-
-            <!-- Weekdays -->
             <div class="calendar-weekdays">
                 <span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span><span>SU</span>
             </div>
-
-            <!-- Calendar grid -->
             <div class="calendar-grid" id="calendar-grid"></div>
         </div>
 
@@ -98,6 +71,22 @@
                     <p>Welcome to my visual diary.</p>
                     <p>Wkleimy tu Twój tekst o Tobie i projekcie w kolejnym kroku.</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Instagram content -->
+        <div class="instagram-content hidden" id="instagram-content">
+            <button class="back-to-menu" id="back-to-menu-ig">← Back</button>
+            <div class="ig-body">
+                <h2 class="ig-title">INSTAGRAM</h2>
+                
+                <!-- Tu wczyta się Twój wrzucony kod z Instagrama -->
+                <a href="https://instagram.com/kacpergad" target="_blank" rel="noopener noreferrer">
+                    <img src="ig-qr.png" alt="Instagram QR Code" class="ig-qr-image">
+                </a>
+                
+                <p class="ig-hint">Click or scan to connect</p>
+                <a href="https://instagram.com/kacpergad" target="_blank" rel="noopener noreferrer" class="ig-btn">@kacpergad</a>
             </div>
         </div>
     </div>
