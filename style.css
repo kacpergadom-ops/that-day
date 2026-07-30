@@ -1,0 +1,188 @@
+/* Reset i podstawy */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    overflow: hidden; /* Blokujemy scroll, zdjęcie ma 100% ekranu */
+}
+
+/* Kontener na zdjęcie */
+.photo-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Warstwa interfejsu (nad zdjęciem) */
+.ui-layer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+    pointer-events: none; /* Pozwala klikać "przez" warstwę... */
+}
+
+/* Elementy interfejsu muszą być klikalne */
+header, footer, .nav-btn {
+    pointer-events: auto;
+}
+
+/* Nagłówek */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.logo {
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* Nawigacja zdjęć */
+.photo-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2rem;
+    pointer-events: none;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    pointer-events: auto;
+}
+
+.nav-btn:hover {
+    color: #fff;
+}
+
+/* Stopka z informacjami o zdjęciu */
+footer {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.photo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.location {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.date {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    opacity: 0.5;
+}
+
+/* Ukryte Menu (Overlay) */
+.overlay-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.overlay-menu.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.close-menu {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.menu-links {
+    list-style: none;
+    text-align: center;
+}
+
+.menu-links li {
+    margin: 1.5rem 0;
+}
+
+.menu-links a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: opacity 0.3s ease;
+}
+
+.menu-links a:hover {
+    opacity: 0.5;
+}
+
+/* Responsywność dla telefonów */
+@media (max-width: 768px) {
+    .ui-layer {
+        padding: 1rem;
+    }
+    .photo-nav {
+        padding: 0 1rem;
+    }
+}
