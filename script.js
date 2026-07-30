@@ -1,58 +1,94 @@
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
+const R2_PUBLIC_URL = 'https://pub-a81a5897ebfe4ef1bbfaf94d1f0b0826.r2.dev';
+const API_URL = 'https://that-day-api.kacper-gadom.workers.dev/photos';
 
-    // --- 1. POBIERANIE ZDJĘĆ (DLA STRONY INTERNETOWEJ) ---
-    if (request.method === 'GET' && url.pathname === '/photos') {
-      // Pobieramy zdjęcia posortowane od najnowszego
-      const { results } = await env.DB.prepare("SELECT * FROM photos ORDER BY photo_date DESC").all();
-      
-      return new Response(JSON.stringify(results), {
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*' // Pozwala stronie pobrać dane
-        }
-      });
+let photos = [];
+let currentIndex = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPhotos();
+
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeMenu = document.getElementById('close-menu');
+    const overlayMenu = document.getElementById('overlay-menu');
+
+    if (menuToggle && overlayMenu) {
+        menuToggle.addEventListener('click', () => overlayMenu.classList.add('active'));
+    }
+    
+    if (closeMenu && overlayMenu) {
+        closeMenu.addEventListener('click', () => overlayMenu.classList.remove('active'));
     }
 
-    // --- 2. UPLOAD ZDJĘCIA (Z IPHONE'A) ---
-    if (request.method === 'POST' && url.pathname === '/upload') {
-      // Proste zabezpieczenie - sprawdzamy hasło w nagłówku
-      const secret = request.headers.get('Authorization');
-      
-      // TUTAJ ZMIEŃ HASŁO NA SWOJE WŁASNE:
-      if (secret !== 'Bearer MOJE_TAJNE_HASLO_THAT_DAY') {
-        return new Response('Brak dostępu', { status: 401 });
-      }
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
 
-      try {
-        // Pobieramy dane wysłane ze Skrótu z iPhone'a
-        const formData = await request.formData();
-        const file = formData.get('file'); // Plik zdjęcia
-        const photoDate = formData.get('date'); // Data z EXIF
-        const location = formData.get('location'); // Lokalizacja
+    if (prevBtn) prevBtn.addEventListener('click', showPrevPhoto);
+    if (nextBtn) nextBtn.addEventListener('click', showNextPhoto);
 
-        if (!file || !photoDate) {
-          return new Response('Brak pliku lub daty EXIF', { status: 400 });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') showPrevPhoto();
+        if (e.key === 'ArrowRight') showNextPhoto();
+        if (e.key === 'Escape' && overlayMenu) overlayMenu.classList.remove('active');
+    });
+});
+
+async function fetchPhotos() {
+    try {
+        const response = await fetch(API_URL);
+        photos = await response.json();
+
+        if (photos && photos.length > 0) {
+            currentIndex = 0;
+            renderPhoto(currentIndex);
+        } else {
+            console.log('Brak zdjęć w bazie.');
         }
-
-        // Generujemy unikalną nazwę pliku
-        const filename = `${Date.now()}-${file.name}`;
-
-        // Wrzucamy zdjęcie do koszyka R2
-        await env.BUCKET.put(filename, file);
-
-        // Zapisujemy informacje w bazie D1
-        await env.DB.prepare(
-          "INSERT INTO photos (filename, photo_date, location) VALUES (?, ?, ?)"
-        ).bind(filename, photoDate, location || '').run();
-
-        return new Response('Zdjęcie dodane pomyślnie!', { status: 200 });
-      } catch (error) {
-        return new Response('Błąd serwera: ' + error.message, { status: 500 });
-      }
+    } catch (error) {
+        console.error('Błąd pobierania zdjęć:', error);
     }
+}
 
-    return new Response('Not found', { status: 404 });
-  }
-};
+function renderPhoto(index) {
+    if (!photos[index]) return;
+
+    const photo = photos[index];
+    const photoMain = document.getElementById('photo-main');
+    const photoBlurBg = document.getElementById('photo-blur-bg');
+    const locationText = document.getElementById('location-text');
+    const dateText = document.getElementById('date-text');
+
+    const photoUrl = `${R2_PUBLIC_URL}/${photo.filename}`;
+
+    if (photoMain) photoMain.style.opacity = '0.2';
+    if (photoBlurBg) photoBlurBg.style.opacity = '0.3';
+
+    setTimeout(() => {
+        if (photoBlurBg) photoBlurBg.style.backgroundImage = `url('${photoUrl}')`;
+        if (photoMain) photoMain.src = photoUrl;
+        
+        let formattedDate = photo.photo_date;
+        if (photo.photo_date && photo.photo_date.includes('-')) {
+            formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
+        }
+        
+        if (locationText) locationText.textContent = photo.location || 'Brak lokalizacji';
+        if (dateText) dateText.textContent = formattedDate;
+
+        if (photoMain) photoMain.style.opacity = '1';
+        if (photoBlurBg) photoBlurBg.style.opacity = '1';
+    }, 200);
+}
+
+function showNextPhoto() {
+    if (currentIndex < photos.length - 1) {
+        currentIndex++;
+        renderPhoto(currentIndex);
+    }
+}
+
+function showPrevPhoto() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        renderPhoto(currentIndex);
+    }
+}
