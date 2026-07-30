@@ -4,7 +4,6 @@ const API_URL = 'https://that-day-api.kacper-gadom.workers.dev/photos';
 let photos = [];
 let currentIndex = 0;
 
-// Lista wariantów dla napisu logo
 const LOGO_VARIANTS = [
     'THAT DAY', 'that day', 'That Day', 'thatday', 
     'THATDAY', 'TH47 D4Y', 'th47 d4y', '7h47d4y', 
@@ -14,7 +13,6 @@ const LOGO_VARIANTS = [
 document.addEventListener('DOMContentLoaded', () => {
     fetchPhotos();
 
-    // Obsługa menu
     const menuToggle = document.getElementById('menu-toggle');
     const closeMenu = document.getElementById('close-menu');
     const overlayMenu = document.getElementById('overlay-menu');
@@ -54,17 +52,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showMenuMain() {
-        menuContent.classList.remove('hidden');
-        calendarContent.classList.add('hidden');
+        if (menuContent) menuContent.classList.remove('hidden');
+        if (calendarContent) calendarContent.classList.add('hidden');
     }
 
     function showCalendarView() {
-        menuContent.classList.add('hidden');
-        calendarContent.classList.remove('hidden');
+        if (menuContent) menuContent.classList.add('hidden');
+        if (calendarContent) calendarContent.classList.remove('hidden');
         renderCalendar();
     }
 
-    // Nawigacja
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
 
@@ -84,7 +81,8 @@ async function fetchPhotos() {
         photos = await response.json();
 
         if (photos && photos.length > 0) {
-            currentIndex = 0;
+            // LOSOWE ZDJĘCIE STARTOWE PO OTWARCIU STRONY
+            currentIndex = Math.floor(Math.random() * photos.length);
             renderPhoto(currentIndex);
         } else {
             console.log('Brak zdjęć w bazie.');
@@ -113,7 +111,6 @@ function renderPhoto(index) {
 
     const photoUrl = `${R2_PUBLIC_URL}/${photo.filename}`;
 
-    // Zmieniamy styl logo przy każdym renderowaniu zdjęcia
     randomizeLogo();
 
     if (photoMain) photoMain.style.opacity = '0.2';
