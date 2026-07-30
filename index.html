@@ -50,10 +50,23 @@
             </ul>
         </div>
 
-        <!-- Widok kalendarza wewnątrz menu -->
+        <!-- Widok prawdziwego kalendarza -->
         <div class="calendar-content hidden" id="calendar-content">
-            <button class="back-to-menu" id="back-to-menu">← Powrót</button>
-            <h2 class="calendar-title">KALENDARZ</h2>
+            <div class="calendar-header">
+                <button class="back-to-menu" id="back-to-menu">← Powrót</button>
+                <div class="calendar-month-nav">
+                    <button id="cal-prev-month">‹</button>
+                    <h2 class="calendar-title" id="calendar-month-title">LIPIEC 2026</h2>
+                    <button id="cal-next-month">›</button>
+                </div>
+            </div>
+
+            <!-- Dni tygodnia -->
+            <div class="calendar-weekdays">
+                <span>PN</span><span>WT</span><span>ŚR</span><span>CZ</span><span>PT</span><span>SO</span><span>ND</span>
+            </div>
+
+            <!-- Siatka dni -->
             <div class="calendar-grid" id="calendar-grid"></div>
         </div>
     </div>
