@@ -18,7 +18,7 @@
     <main class="ui-layer">
         
         <header>
-            <h1 class="logo">THAT DAY</h1>
+            <h1 class="logo" id="logo">THAT DAY</h1>
             <button class="menu-toggle" id="menu-toggle">Menu</button>
         </header>
 
@@ -36,15 +36,26 @@
 
     </main>
 
-    <!-- Ukryte menu -->
+    <!-- Rozmyte menu nakładkowe -->
     <div class="overlay-menu" id="overlay-menu">
         <button class="close-menu" id="close-menu">✕</button>
-        <ul class="menu-links">
-            <li><a href="#">Zdjęcia</a></li>
-            <li><a href="#">Kalendarz</a></li>
-            <li><a href="#">O mnie</a></li>
-            <li><a href="#">Instagram</a></li>
-        </ul>
+        
+        <!-- Widok główny menu -->
+        <div class="menu-content" id="menu-content">
+            <ul class="menu-links">
+                <li><a href="#" id="link-photos">Zdjęcia</a></li>
+                <li><a href="#" id="link-calendar">Kalendarz</a></li>
+                <li><a href="#">O mnie</a></li>
+                <li><a href="#">Instagram</a></li>
+            </ul>
+        </div>
+
+        <!-- Widok kalendarza wewnątrz menu -->
+        <div class="calendar-content hidden" id="calendar-content">
+            <button class="back-to-menu" id="back-to-menu">← Powrót</button>
+            <h2 class="calendar-title">KALENDARZ</h2>
+            <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
     </div>
 
     <script src="script.js"></script>
