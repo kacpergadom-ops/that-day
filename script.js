@@ -3,7 +3,7 @@ const API_URL = 'https://that-day-api.kacper-gadom.workers.dev/photos';
 
 let photos = [];
 let currentIndex = 0;
-let calendarCurrentDate = new Date(); // Obiekt do śledzenia widocznego miesiąca w kalendarzu
+let calendarCurrentDate = new Date(); 
 
 const LOGO_VARIANTS = [
     'THAT DAY', 'that day', 'That Day', 'thatday', 
@@ -12,8 +12,8 @@ const LOGO_VARIANTS = [
 ];
 
 const MONTH_NAMES = [
-    'STYCZEŃ', 'LUTY', 'MARZEC', 'KWIECIEŃ', 'MAJ', 'CZERWIEC',
-    'LIPIEC', 'SIERPIEŃ', 'WRZESIEŃ', 'PAŹDZIERNIK', 'LISTOPAD', 'GRUDZIEŃ'
+    'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+    'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -104,12 +104,13 @@ async function fetchPhotos() {
         photos = await response.json();
 
         if (photos && photos.length > 0) {
-            // Losowy start
             currentIndex = Math.floor(Math.random() * photos.length);
             renderPhoto(currentIndex);
+        } else {
+            console.log('No photos in the database.');
         }
     } catch (error) {
-        console.error('Błąd pobierania zdjęć:', error);
+        console.error('Error fetching photos:', error);
     }
 }
 
@@ -148,7 +149,7 @@ function renderPhoto(index) {
             formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
         }
         
-        if (locationText) locationText.textContent = photo.location || 'Brak lokalizacji';
+        if (locationText) locationText.textContent = photo.location || 'No location';
         if (dateText) dateText.textContent = formattedDate;
 
         if (photoMain) photoMain.classList.add('loaded');
@@ -169,33 +170,28 @@ function renderCalendar() {
 
     monthTitle.textContent = `${MONTH_NAMES[month]} ${year}`;
 
-    // Pierwszy dzień miesiąca i ilość dni
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
 
-    // Dzień tygodnia (0 - Niedziela, zmiana na Polskie 0 - Poniedziałek)
     let startingDay = firstDay.getDay() - 1;
     if (startingDay === -1) startingDay = 6;
 
-    // Puste kratki przed 1 dniem miesiąca
     for (let i = 0; i < startingDay; i++) {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'calendar-day empty';
         calendarGrid.appendChild(emptyDiv);
     }
 
-    // Mapa zdjęć dla łatwego wyszukiwania po dacie YYYY-MM-DD
     const photoMap = {};
     photos.forEach((photo, idx) => {
         if (photo.photo_date) {
-            const dateOnly = photo.photo_date.split(' ')[0]; // Zapewnia format YYYY-MM-DD
+            const dateOnly = photo.photo_date.split(' ')[0]; 
             if (!photoMap[dateOnly]) photoMap[dateOnly] = [];
             photoMap[dateOnly].push({ photo, idx });
         }
     });
 
-    // Generowanie kratek dni miesiąca
     for (let day = 1; day <= daysInMonth; day++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'calendar-day';
@@ -205,7 +201,6 @@ function renderCalendar() {
         dayNumSpan.textContent = day;
         dayDiv.appendChild(dayNumSpan);
 
-        // Formatowanie daty dla tego dnia (np. 2026-07-29)
         const formattedMonth = String(month + 1).padStart(2, '0');
         const formattedDay = String(day).padStart(2, '0');
         const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
