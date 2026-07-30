@@ -1,85 +1,58 @@
-// Konfiguracja Twojego R2 i API
-const R2_PUBLIC_URL = 'https://pub-a81a5897ebfe4ef1bbfaf94d1f0b0826.r2.dev';
-const API_URL = 'https://that-day-api.kacper-gadom.workers.dev/photos';
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
 
-let photos = [];
-let currentIndex = 0;
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Pobieramy zdjęcia z naszej bazy danych D1 przez Worker API
-    fetchPhotos();
-
-    // Obsługa interfejsu (Menu)
-    const menuToggle = document.getElementById('menu-toggle');
-    const closeMenu = document.getElementById('close-menu');
-    const overlayMenu = document.getElementById('overlay-menu');
-
-    menuToggle.addEventListener('click', () => overlayMenu.classList.add('active'));
-    closeMenu.addEventListener('click', () => overlayMenu.classList.remove('active'));
-
-    // Nawigacja strzałkami na ekranie
-    document.getElementById('prev-btn').addEventListener('click', showPrevPhoto);
-    document.getElementById('next-btn').addEventListener('click', showNextPhoto);
-
-    // Nawigacja klawiaturą
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') showPrevPhoto();
-        if (e.key === 'ArrowRight') showNextPhoto();
-        if (e.key === 'Escape') overlayMenu.classList.remove('active');
-    });
-});
-
-async function fetchPhotos() {
-    try {
-        const response = await fetch(API_URL);
-        photos = await response.json();
-
-        if (photos.length > 0) {
-            currentIndex = 0; // Zaczynamy od najnowszego zdjęcia
-            renderPhoto(currentIndex);
-        } else {
-            console.log('Brak zdjęć w bazie.');
+    // --- 1. POBIERANIE ZDJĘĆ (DLA STRONY INTERNETOWEJ) ---
+    if (request.method === 'GET' && url.pathname === '/photos') {
+      // Pobieramy zdjęcia posortowane od najnowszego
+      const { results } = await env.DB.prepare("SELECT * FROM photos ORDER BY photo_date DESC").all();
+      
+      return new Response(JSON.stringify(results), {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*' // Pozwala stronie pobrać dane
         }
-    } catch (error) {
-        console.error('Błąd pobierania zdjęć:', error);
+      });
     }
-}
 
-function renderPhoto(index) {
-    if (!photos[index]) return;
+    // --- 2. UPLOAD ZDJĘCIA (Z IPHONE'A) ---
+    if (request.method === 'POST' && url.pathname === '/upload') {
+      // Proste zabezpieczenie - sprawdzamy hasło w nagłówku
+      const secret = request.headers.get('Authorization');
+      
+      // TUTAJ ZMIEŃ HASŁO NA SWOJE WŁASNE:
+      if (secret !== 'Bearer MOJE_TAJNE_HASLO_THAT_DAY') {
+        return new Response('Brak dostępu', { status: 401 });
+      }
 
-    const photo = photos[index];
-    const photoContainer = document.getElementById('photo-container');
-    const locationText = document.getElementById('location-text');
-    const dateText = document.getElementById('date-text');
+      try {
+        // Pobieramy dane wysłane ze Skrótu z iPhone'a
+        const formData = await request.formData();
+        const file = formData.get('file'); // Plik zdjęcia
+        const photoDate = formData.get('date'); // Data z EXIF
+        const location = formData.get('location'); // Lokalizacja
 
-    // Animacja przejścia (fade)
-    photoContainer.style.opacity = '0.3';
+        if (!file || !photoDate) {
+          return new Response('Brak pliku lub daty EXIF', { status: 400 });
+        }
 
-    setTimeout(() => {
-        // Podmieniamy zdjęcie na plik z Twojego R2
-        photoContainer.style.backgroundImage = `url('${R2_PUBLIC_URL}/${photo.filename}')`;
-        
-        // Formatujemy datę (wyciągamy sam dzień, miesiąc i rok bez sekund)
-        const formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
-        
-        locationText.textContent = photo.location || 'Brak lokalizacji';
-        dateText.textContent = formattedDate;
+        // Generujemy unikalną nazwę pliku
+        const filename = `${Date.now()}-${file.name}`;
 
-        photoContainer.style.opacity = '1';
-    }, 200);
-}
+        // Wrzucamy zdjęcie do koszyka R2
+        await env.BUCKET.put(filename, file);
 
-function showNextPhoto() {
-    if (currentIndex < photos.length - 1) {
-        currentIndex++;
-        renderPhoto(currentIndex);
+        // Zapisujemy informacje w bazie D1
+        await env.DB.prepare(
+          "INSERT INTO photos (filename, photo_date, location) VALUES (?, ?, ?)"
+        ).bind(filename, photoDate, location || '').run();
+
+        return new Response('Zdjęcie dodane pomyślnie!', { status: 200 });
+      } catch (error) {
+        return new Response('Błąd serwera: ' + error.message, { status: 500 });
+      }
     }
-}
 
-function showPrevPhoto() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        renderPhoto(currentIndex);
-    }
-}
+    return new Response('Not found', { status: 404 });
+  }
+};
