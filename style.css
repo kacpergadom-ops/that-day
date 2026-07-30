@@ -13,7 +13,7 @@ body, html {
     overflow: hidden;
 }
 
-/* WARSTWA ZDJĘCIA (Pod spodem) */
+/* WARSTWA ZDJĘCIA I TŁA */
 .photo-wrapper {
     position: absolute;
     top: 0;
@@ -24,10 +24,10 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1; /* Niska warstwa */
+    z-index: 1;
 }
 
-/* Rozmyte tło */
+/* Rozmyte tło na pełen ekran */
 .photo-blur-bg {
     position: absolute;
     top: -10%;
@@ -36,20 +36,23 @@ body, html {
     height: 120%;
     background-size: cover;
     background-position: center;
-    filter: blur(30px) brightness(0.5);
+    filter: blur(35px) brightness(0.5);
     transform: scale(1.1);
     z-index: 1;
     transition: opacity 0.4s ease-in-out;
 }
 
-/* Główne zdjęcie bez ucinania */
+/* Główne zdjęcie — zmuszone do dopasowania w granicach ekranu */
 .photo-main {
     position: relative;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
     z-index: 2;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    width: auto;
+    height: auto;
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
     transition: opacity 0.3s ease-in-out;
 }
 
@@ -64,13 +67,13 @@ body, html {
     flex-direction: column;
     justify-content: space-between;
     padding: 2rem;
-    z-index: 10; /* Wysoka warstwa - na wierzchu! */
-    pointer-events: none; /* Kliknięcia przechodzą, chyba że w przycisk */
+    z-index: 10;
+    pointer-events: none;
 }
 
 .ui-layer button, 
 .ui-layer a {
-    pointer-events: auto; /* Działa klikanie w przyciski */
+    pointer-events: auto;
 }
 
 header {
@@ -152,7 +155,7 @@ footer {
     font-weight: 600;
 }
 
-/* NAKŁADKA MENU (Najwyższa warstwa) */
+/* NAKŁADKA MENU */
 .overlay-menu {
     position: fixed;
     top: 0;
