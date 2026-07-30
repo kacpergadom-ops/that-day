@@ -180,7 +180,8 @@ function renderPhoto(index) {
     if (photoBlurBg) photoBlurBg.classList.remove('loaded');
 
     const imgLoader = new Image();
-    imgLoader.src = photoUrl;
+    
+    // NAJPIERW mówimy, co ma się stać po załadowaniu
     imgLoader.onload = () => {
         if (photoBlurBg) photoBlurBg.style.backgroundImage = `url('${photoUrl}')`;
         if (photoMain) photoMain.src = photoUrl;
@@ -196,6 +197,16 @@ function renderPhoto(index) {
         if (photoMain) photoMain.classList.add('loaded');
         if (photoBlurBg) photoBlurBg.classList.add('loaded');
     };
+
+    // Zabezpieczenie przed brakiem pliku (żeby ekran nie był czarny)
+    imgLoader.onerror = () => {
+        console.error("Failed to load photo:", photoUrl);
+        if (photoMain) photoMain.classList.add('loaded');
+        if (photoBlurBg) photoBlurBg.classList.add('loaded');
+    };
+
+    // DOPIERO POTEM uruchamiamy pobieranie obrazka
+    imgLoader.src = photoUrl;
 }
 
 function renderCalendar() {
