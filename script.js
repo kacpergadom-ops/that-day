@@ -5,6 +5,10 @@ let photos = [];
 let currentIndex = 0;
 let calendarCurrentDate = new Date(); 
 
+let isAnimating = false;
+let isInitialLoad = true;
+let toastTimeout = null;
+
 const LOGO_VARIANTS = [
     'THAT DAY', 'that day', 'That Day', 'thatday', 
     'THATDAY', 'TH47 D4Y', 'th47 d4y', '7h47d4y', 
@@ -141,6 +145,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function showToast(message) {
+    const toast = document.getElementById('toast-message');
+    if (!toast) return;
+    
+    toast.textContent = message;
+    toast.classList.add('show');
+    
+    if (toastTimeout) clearTimeout(toastTimeout);
+    
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2500); // Komunikat znika po 2.5 sekundy
+}
+
 async function fetchPhotos() {
     try {
         const response = await fetch(API_URL);
@@ -164,49 +182,76 @@ function randomizeLogo() {
 }
 
 function renderPhoto(index) {
-    if (!photos[index]) return;
+    if (!photos[index] || isAnimating) return;
+    
+    isAnimating = true;
 
     const photo = photos[index];
     const photoMain = document.getElementById('photo-main');
     const photoBlurBg = document.getElementById('photo-blur-bg');
     const locationText = document.getElementById('location-text');
     const dateText = document.getElementById('date-text');
-
     const photoUrl = `${R2_PUBLIC_URL}/${photo.filename}`;
 
-    randomizeLogo();
-
-    if (photoMain) photoMain.classList.remove('loaded');
-    if (photoBlurBg) photoBlurBg.classList.remove('loaded');
-
-    const imgLoader = new Image();
-    
-    // NAJPIERW mówimy, co ma się stać po załadowaniu
-    imgLoader.onload = () => {
-        if (photoBlurBg) photoBlurBg.style.backgroundImage = `url('${photoUrl}')`;
-        if (photoMain) photoMain.src = photoUrl;
-
-        let formattedDate = photo.photo_date;
-        if (photo.photo_date && photo.photo_date.includes('-')) {
-            formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
-        }
+    const applyNewPhoto = () => {
+        randomizeLogo();
         
-        if (locationText) locationText.textContent = photo.location || 'No location';
-        if (dateText) dateText.textContent = formattedDate;
+        const imgLoader = new Image();
+        imgLoader.onload = () => {
+            if (photoBlurBg) photoBlurBg.style.backgroundImage = `url('${photoUrl}')`;
+            if (photoMain) photoMain.src = photoUrl;
 
-        if (photoMain) photoMain.classList.add('loaded');
-        if (photoBlurBg) photoBlurBg.classList.add('loaded');
+            let formattedDate = photo.photo_date;
+            if (photo.photo_date && photo.photo_date.includes('-')) {
+                formattedDate = photo.photo_date.split(' ')[0].split('-').reverse().join('.');
+            }
+            
+            if (locationText) locationText.textContent = photo.location || 'No location';
+            if (dateText) dateText.textContent = formattedDate;
+
+            if (photoMain) photoMain.classList.add('loaded');
+            if (photoBlurBg) photoBlurBg.classList.add('loaded');
+            
+            // Odblokowanie nawigacji po skończeniu płynnego fade-in
+            setTimeout(() => { isAnimating = false; }, 400); 
+        };
+        imgLoader.onerror = () => {
+            isAnimating = false;
+        };
+        imgLoader.src = photoUrl;
     };
 
-    // Zabezpieczenie przed brakiem pliku (żeby ekran nie był czarny)
-    imgLoader.onerror = () => {
-        console.error("Failed to load photo:", photoUrl);
-        if (photoMain) photoMain.classList.add('loaded');
-        if (photoBlurBg) photoBlurBg.classList.add('loaded');
-    };
+    if (isInitialLoad) {
+        isInitialLoad = false;
+        applyNewPhoto();
+    } else {
+        // Zanikanie do zera (Fade-out)
+        if (photoMain) photoMain.classList.remove('loaded');
+        if (photoBlurBg) photoBlurBg.classList.remove('loaded');
+        
+        // Czekamy 400ms aż zdjęcie całkiem zniknie, a potem ładujemy nowe
+        setTimeout(applyNewPhoto, 400); 
+    }
+}
 
-    // DOPIERO POTEM uruchamiamy pobieranie obrazka
-    imgLoader.src = photoUrl;
+function showNextPhoto() {
+    if (isAnimating) return;
+    if (currentIndex < photos.length - 1) {
+        currentIndex++;
+        renderPhoto(currentIndex);
+    } else {
+        showToast("This is the most recent memory.");
+    }
+}
+
+function showPrevPhoto() {
+    if (isAnimating) return;
+    if (currentIndex > 0) {
+        currentIndex--;
+        renderPhoto(currentIndex);
+    } else {
+        showToast("This is the oldest memory.");
+    }
 }
 
 function renderCalendar() {
@@ -276,9 +321,11 @@ function renderCalendar() {
             }
 
             dayDiv.addEventListener('click', () => {
-                currentIndex = firstPhotoObj.idx;
-                renderPhoto(currentIndex);
-                overlayMenu.classList.remove('active');
+                if (!isAnimating) {
+                    currentIndex = firstPhotoObj.idx;
+                    renderPhoto(currentIndex);
+                    overlayMenu.classList.remove('active');
+                }
             });
         }
 
@@ -291,19 +338,5 @@ function renderCalendar() {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'calendar-day empty';
         calendarGrid.appendChild(emptyDiv);
-    }
-}
-
-function showNextPhoto() {
-    if (currentIndex < photos.length - 1) {
-        currentIndex++;
-        renderPhoto(currentIndex);
-    }
-}
-
-function showPrevPhoto() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        renderPhoto(currentIndex);
     }
 }
