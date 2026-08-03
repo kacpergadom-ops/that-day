@@ -156,7 +156,7 @@ function showToast(message) {
     
     toastTimeout = setTimeout(() => {
         toast.classList.remove('show');
-    }, 2500); // Komunikat znika po 2.5 sekundy
+    }, 2500); 
 }
 
 async function fetchPhotos() {
@@ -234,20 +234,22 @@ function renderPhoto(index) {
     }
 }
 
+// STRZAŁKA W PRAWO (Nowsze zdjęcia -> dążymy do indeksu 0)
 function showNextPhoto() {
     if (isAnimating) return;
-    if (currentIndex < photos.length - 1) {
-        currentIndex++;
+    if (currentIndex > 0) {
+        currentIndex--;
         renderPhoto(currentIndex);
     } else {
         showToast("This is the most recent memory.");
     }
 }
 
+// STRZAŁKA W LEWO (Starsze zdjęcia -> dążymy do końca bazy)
 function showPrevPhoto() {
     if (isAnimating) return;
-    if (currentIndex > 0) {
-        currentIndex--;
+    if (currentIndex < photos.length - 1) {
+        currentIndex++;
         renderPhoto(currentIndex);
     } else {
         showToast("This is the oldest memory.");
